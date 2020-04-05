@@ -28,6 +28,7 @@ import android.app.ActivityManager;
 import android.hardware.Camera;
 import android.hardware.camera2.CameraManager;
 
+import androidx.annotation.RequiresApi;
 import androidx.annotation.Nullable;
 
 import com.facebook.react.bridge.Arguments;
@@ -448,7 +449,7 @@ public class RNDeviceModule extends ReactContextBaseJavaModule {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
       LocationManager mLocationManager = (LocationManager) getReactApplicationContext().getSystemService(Context.LOCATION_SERVICE);
       try {
-        locationEnabled = mLocationManager.isLocationEnabled();
+        locationEnabled = mLocationManager.isLocationEnabled();        
       } catch (Exception e) {
         System.err.println("Unable to determine if location enabled. LocationManager was null");
         return false;
@@ -795,6 +796,44 @@ public class RNDeviceModule extends ReactContextBaseJavaModule {
   @ReactMethod
   public void getSupported64BitAbis(Promise p) { p.resolve(getSupported64BitAbisSync()); }
 
+  @RequiresApi(api = Build.VERSION_CODES.P)
+  @ReactMethod
+  public void getLocationPowerSaveMode(Promise p) {
+    PowerManager powerManager = (PowerManager)getReactApplicationContext().getSystemService(Context.POWER_SERVICE);
+    int mode = powerManager.getLocationPowerSaveMode();
+    String locationPowerSaveMode = "";
+    switch (mode) {
+      case 0:
+        locationPowerSaveMode = "LOCATION_MODE_NO_CHANGE";
+        break;
+      case 1:
+        locationPowerSaveMode = "LOCATION_MODE_GPS_DISABLED_WHEN_SCREEN_OFF";
+        break;
+      case 2:
+        locationPowerSaveMode = "LOCATION_MODE_ALL_DISABLED_WHEN_SCREEN_OFF";
+        break;
+      case 3:
+        locationPowerSaveMode = "LOCATION_MODE_FOREGROUND_ONLY";
+        break;
+      case 4:
+        locationPowerSaveMode = "LOCATION_MODE_THROTTLE_REQUESTS_WHEN_SCREEN_OFF";
+        break;
+      default:
+    }
+    p.resolve(locationPowerSaveMode);
+  }
+
+  @RequiresApi(api = Build.VERSION_CODES.M)
+  @ReactMethod
+  public void isBatteryOptimizationIgnored(Promise p) {
+    try {
+      String packageName = getPackageInfo().packageName;
+      PowerManager powerManager = (PowerManager)getReactApplicationContext().getSystemService(Context.POWER_SERVICE);
+      p.resolve(powerManager.isIgnoringBatteryOptimizations(packageName));
+    } catch (Exception e) {
+      p.reject(e);
+    }
+  }
 
   private WritableMap getPowerStateFromIntent (Intent intent) {
     if(intent == null) {
