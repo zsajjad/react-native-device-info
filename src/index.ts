@@ -1233,6 +1233,20 @@ export async function getDeviceToken() {
   return 'unknown';
 }
 
+export async function getLocationPowerSaveMode () {
+  if (Platform.OS === 'android' && Platform.Version >= 28) {
+    return RNDeviceInfo.getLocationPowerSaveMode();
+  }
+  return Promise.resolve("");
+}
+
+export async function isBatteryOptimizationIgnored () {
+  if (Platform.OS === 'android' && Platform.Version >= 23) {
+    return RNDeviceInfo.isBatteryOptimizationIgnored();
+  }
+  return Promise.resolve(false);
+}
+
 const deviceInfoEmitter = new NativeEventEmitter(NativeModules.RNDeviceInfo);
 export function useBatteryLevel(): number | null {
   const [batteryLevel, setBatteryLevel] = useState<number | null>(null);
@@ -1382,6 +1396,7 @@ const deviceInfoModule: DeviceInfoModule = {
   getIpAddressSync,
   getLastUpdateTime,
   getLastUpdateTimeSync,
+  getLocationPowerSaveMode,
   getMacAddress,
   getMacAddressSync,
   getManufacturer,
@@ -1427,6 +1442,7 @@ const deviceInfoModule: DeviceInfoModule = {
   isAirplaneModeSync,
   isBatteryCharging,
   isBatteryChargingSync,
+  isBatteryOptimizationIgnored,
   isCameraPresent,
   isCameraPresentSync,
   isEmulator,

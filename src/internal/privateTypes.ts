@@ -85,6 +85,7 @@ interface ExposedNativeMethods {
   getIpAddressSync: () => string;
   getLastUpdateTime: () => Promise<number>;
   getLastUpdateTimeSync: () => number;
+  getLocationPowerSaveMode: () => Promise<string>;
   getMacAddress: () => Promise<string>;
   getMacAddressSync: () => string;
   getMaxMemory: () => Promise<number>;
@@ -119,6 +120,7 @@ interface ExposedNativeMethods {
   isAirplaneModeSync: () => boolean;
   isBatteryCharging: () => Promise<boolean>;
   isBatteryChargingSync: () => boolean;
+  isBatteryOptimizationIgnored: () => Promise<boolean>;
   isCameraPresent: () => Promise<boolean>;
   isCameraPresentSync: () => boolean;
   isEmulator: () => Promise<boolean>;
